@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <section class="calculator-section">
+  <div class="calculator-shell">
+    <div class="calculator-topbar">
+      <span class="calculator-label">Financial Calculator</span>
+      <button type="button" class="calculator-reset" onclick="clearDisplay()">Reset</button>
+    </div>
+
+    <div class="calculator-wrap">
+      <input type="text" id="display" class="display" value="0" readonly>
+
+      <div class="buttons">
+        <button class="clear" onclick="clearDisplay()">AC</button>
+        <button class="soft" onclick="deleteNumber()">DEL</button>
+        <button class="soft" onclick="percentage()">%</button>
+        <button class="operator" onclick="chooseOperator('/')">÷</button>
+
+        <button onclick="addNumber('7')">7</button>
+        <button onclick="addNumber('8')">8</button>
+        <button onclick="addNumber('9')">9</button>
+        <button class="operator" onclick="chooseOperator('*')">×</button>
+
+        <button onclick="addNumber('4')">4</button>
+        <button onclick="addNumber('5')">5</button>
+        <button onclick="addNumber('6')">6</button>
+        <button class="operator" onclick="chooseOperator('-')">−</button>
+
+        <button onclick="addNumber('1')">1</button>
+        <button onclick="addNumber('2')">2</button>
+        <button onclick="addNumber('3')">3</button>
+        <button class="operator" onclick="chooseOperator('+')">+</button>
+
+        <button class="zero" onclick="addNumber('0')">0</button>
+        <button onclick="addNumber('.')">.</button>
+        <button class="equal" onclick="calculate()">=</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const display = document.getElementById("display");
+
+  let firstNumber = "";
+  let operator = "";
+  let waitingForSecondNumber = false;
+
+  function addNumber(number) {
+    if (waitingForSecondNumber) {
+      display.value = number;
+      waitingForSecondNumber = false;
+      return;
+    }
+
+    if (number === "." && display.value.includes(".")) {
+      return;
+    }
+
+    if (display.value === "0" && number !== ".") {
+      display.value = number;
+    } else {
+      display.value += number;
+    }
+  }
+
+  function chooseOperator(selectedOperator) {
+    firstNumber = parseFloat(display.value);
+    operator = selectedOperator;
+    waitingForSecondNumber = true;
+  }
+
+  function calculate() {
+    if (operator === "" || waitingForSecondNumber) {
+      return;
+    }
+
+    const secondNumber = parseFloat(display.value);
+    let result;
+
+    switch (operator) {
+      case "+":
+        result = firstNumber + secondNumber;
+        break;
+      case "-":
+        result = firstNumber - secondNumber;
+        break;
+      case "*":
+        result = firstNumber * secondNumber;
+        break;
+      case "/":
+        if (secondNumber === 0) {
+          display.value = "Error";
+          resetCalculator();
+          return;
+        }
+        result = firstNumber / secondNumber;
+        break;
+    }
+
+    display.value = Number(result.toFixed(10));
+    firstNumber = "";
+    operator = "";
+    waitingForSecondNumber = true;
+  }
+
+  function clearDisplay() {
+    display.value = "0";
+    resetCalculator();
+  }
+
+  function resetCalculator() {
+    firstNumber = "";
+    operator = "";
+    waitingForSecondNumber = false;
+  }
+
+  function deleteNumber() {
+    if (display.value.length === 1) {
+      display.value = "0";
+    } else {
+      display.value = display.value.slice(0, -1);
+    }
+  }
+
+  function percentage() {
+    const number = parseFloat(display.value);
+    display.value = number / 100;
+  }
+</script>
+</body>
+</html>
